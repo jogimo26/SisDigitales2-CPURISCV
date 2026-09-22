@@ -141,7 +141,7 @@ module riscv (
   alu rv_alu (
     .a(alu_a),
     .b(alu_b),
-    .ALU_out(alu_out),
+    .alu_out(alu_out),
     .op(alu_op)
   );
 
@@ -225,22 +225,22 @@ module riscv (
       is_i_instr ?
       {
         {21{IR[31]}},
-        IR[30:20]
+        IR[31:20]
       } :
 
       // Tipo S
       is_s_instr ?
       {
-        {21{IR[31]}},
-        IR[30:25],
-        IR[11:8],
-        IR[7]
+        {20{IR[31]}},
+        IR[31:25],
+        IR[11:7],
       } :
 
       // Tipo B
       is_b_instr ?
       {
-        {20{IR[31]}},
+        {19{IR[31]}},
+        IR[31],
         IR[7],
         IR[30:25],
         IR[11:8],
@@ -257,7 +257,8 @@ module riscv (
       // Tipo J
       is_j_instr ?
       {
-        {12{IR[31]}},
+        {11{IR[31]}},
+        IR[31],
         IR[19:12],
         IR[20],
         IR[30:21],
