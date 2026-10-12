@@ -137,7 +137,7 @@ wire imm_valid;
 
 register_file rf (
     .clk(clk),
-    .wr_en(wr_en),
+    .wr_en(wr_en & state_execute),
     .wr_index(rd),
     .wr_data(alu_out),
     .rd_index1(rs1),
