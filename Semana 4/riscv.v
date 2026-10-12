@@ -139,7 +139,7 @@ wire imm_valid;
 
 register_file rf (
     .clk(clk),
-    .wr_en(wr_en),
+    .wr_en(wr_en & state_execute),
     .wr_index(rd),
     .wr_data(alu_out),
     .rd_index1(rs1),
@@ -421,7 +421,6 @@ assign is_andi =
 // GUIA 4 - REQUERIMIENTO 2  GENERACION DE LA OPERACION DE LA ALU
 
 
-assign alu_op =
 assign alu_op =
 
     // ADD / ADDI
