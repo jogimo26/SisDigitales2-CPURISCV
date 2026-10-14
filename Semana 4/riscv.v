@@ -139,7 +139,7 @@ wire imm_valid;
 
 register_file rf (
     .clk(clk),
-    .wr_en(wr_en & state_execute),
+    .wr_en(wr_en),
     .wr_index(rd),
     .wr_data(alu_out),
     .rd_index1(rs1),
@@ -163,7 +163,11 @@ alu rv_alu (
 // 9. CONEXION REGISTER FILE - ALU
 // 
 
-assign alu_a = src1_value;
+// MUX de entrada A de la ALU
+assign alu_a =
+    is_lui   ? 32'b0 :
+    is_auipc ? PC :
+               src1_value;
 
 // MUX para seleccionar registro o inmediato
 assign alu_b = imm_valid ? imm : src2_value;
@@ -345,13 +349,11 @@ assign is_slt =
     ||
     (dec_bits2 == 10'b010_0010011);
 
-
 // SLTU / SLTIU
 assign is_sltu =
     (dec_bits == 11'b0_011_0110011)
     ||
     (dec_bits2 == 10'b011_0010011);
-
 
 // SRA / SRAI
 assign is_sra =
@@ -361,7 +363,6 @@ assign is_sra =
         (dec_bits2 == 10'b101_0010011) &&
         (funct7[5] == 1'b1)
     );
-
 
 // SRL / SRLI
 assign is_srl =
@@ -383,10 +384,6 @@ assign is_and =
 
 assign is_lui =
     (opcode == 7'b0110111);
-
-
-// AUIPC
-// opcode = 0010111
 
 assign is_auipc =
     (opcode == 7'b0010111);
@@ -421,7 +418,14 @@ assign is_andi =
 // GUIA 4 - REQUERIMIENTO 2  GENERACION DE LA OPERACION DE LA ALU
 
 
+
 assign alu_op =
+
+    // LUI: 0 + imm
+    is_lui   ? 4'b0000 :
+
+    // AUIPC: PC + imm
+    is_auipc ? 4'b0000 :
 
     // ADD / ADDI
     is_addi ? 4'b0000 :
