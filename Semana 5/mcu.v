@@ -88,7 +88,7 @@ module sram_32x (
     input wire [31:0] wr_data,
 
     input wire rd_en,
-    output wire [31:0] rd_data
+    output reg [31:0] rd_data
 );
 
     // Memoria de 1024 palabras x 32 bits
@@ -98,11 +98,13 @@ module sram_32x (
     always @(posedge clk) begin
         if (wr_en)
             mem[addr] <= wr_data;
+     // Lectura
+        if (rd_en)
+            rd_data <= mem[addr];
+        else
+            rd_data <= 32'bz;
     end
 
-    // Lectura
-    // Si rd_en esta desactivado, la salida queda en alta impedancia
-    assign rd_data =
-        rd_en ? mem[addr] : 32'bz;
+   
 
 endmodule
